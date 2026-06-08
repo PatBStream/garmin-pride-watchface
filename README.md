@@ -1,6 +1,8 @@
-# Pride Dashboard
+# Pride Watch Face
 
-Private Garmin Connect IQ watch face for Pat's Venu Sq 2 family watches.
+Garmin Connect IQ watch face for Venu Sq 2 family watches.  
+
+Build with [OpenClaw](https://openclaw.ai/) connected to (https://chatgpt.com/) ChatGPT Codex, no hand-coding.  See docs for prompts and MD files used in development.
 
 ## Targets
 
@@ -9,7 +11,7 @@ Private Garmin Connect IQ watch face for Pat's Venu Sq 2 family watches.
 
 ## V1
 
-V1 is a Progress Pride dashboard watch face with:
+V1 is a Pride dashboard watch face with:
 
 - Full-screen generated Progress Pride background
 - Large digital time with AM/PM suffix
@@ -18,9 +20,6 @@ V1 is a Progress Pride dashboard watch face with:
 - Heart rate
 - Battery percentage
 - Calories
-- Simplified always-on display
-- Configurable visibility for the main fields
-- Configurable primary and secondary text colors
 
 The current design is intentionally tuned for the 320x360 Venu Sq 2 screen only.
 
