@@ -1,0 +1,24 @@
+# Garmin Connect IQ generated output
+bin/
+build/
+*.prg
+*.iq
+*.debug.xml
+*.mir
+
+# Local SDK/tool downloads and scratch files
+.tooling/
+tmp/
+temp/
+*.tmp
+*.log
+
+# Developer keys and local editor settings
+*.pem
+*.der
+developer_key*
+.vscode/settings.json
+
+# OS noise
+.DS_Store
+Thumbs.db

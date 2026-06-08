@@ -1,0 +1,56 @@
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <properties>
+        <property id="timeFormat" type="number">0</property>
+        <property id="showSeconds" type="boolean">false</property>
+        <property id="showDate" type="boolean">true</property>
+        <property id="showSteps" type="boolean">true</property>
+        <property id="showBattery" type="boolean">true</property>
+        <property id="showHeartRate" type="boolean">true</property>
+        <property id="showCalories" type="boolean">true</property>
+        <property id="primaryTextColor" type="number">0</property>
+        <property id="secondaryTextColor" type="number">1</property>
+    </properties>
+
+    <settings>
+        <setting propertyKey="@Properties.timeFormat" title="@Strings.timeFormatTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.timeFormat12</listEntry>
+                <listEntry value="1">@Strings.timeFormat24</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.showSeconds" title="@Strings.showSecondsTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.showDate" title="@Strings.showDateTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.showSteps" title="@Strings.showStepsTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.showBattery" title="@Strings.showBatteryTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.showHeartRate" title="@Strings.showHeartRateTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.showCalories" title="@Strings.showCaloriesTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.primaryTextColor" title="@Strings.primaryColorTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.colorWhite</listEntry>
+                <listEntry value="1">@Strings.colorSoftGray</listEntry>
+                <listEntry value="2">@Strings.colorCyan</listEntry>
+                <listEntry value="3">@Strings.colorYellow</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.secondaryTextColor" title="@Strings.secondaryColorTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.colorWhite</listEntry>
+                <listEntry value="1">@Strings.colorSoftGray</listEntry>
+                <listEntry value="2">@Strings.colorCyan</listEntry>
+                <listEntry value="3">@Strings.colorYellow</listEntry>
+            </settingConfig>
+        </setting>
+    </settings>
+</resources>

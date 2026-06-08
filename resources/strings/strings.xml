@@ -1,0 +1,20 @@
+<strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <string id="appName">Pride Dashboard</string>
+
+    <string id="timeFormatTitle">Time format</string>
+    <string id="showSecondsTitle">Show seconds</string>
+    <string id="showDateTitle">Show date</string>
+    <string id="showStepsTitle">Show steps</string>
+    <string id="showBatteryTitle">Show battery</string>
+    <string id="showHeartRateTitle">Show heart rate</string>
+    <string id="showCaloriesTitle">Show calories</string>
+    <string id="primaryColorTitle">Primary text color</string>
+    <string id="secondaryColorTitle">Secondary text color</string>
+
+    <string id="timeFormat12">12 hour</string>
+    <string id="timeFormat24">24 hour</string>
+    <string id="colorWhite">White</string>
+    <string id="colorSoftGray">Soft gray</string>
+    <string id="colorCyan">Cyan</string>
+    <string id="colorYellow">Yellow</string>
+</strings>

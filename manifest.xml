@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application
+        id="0fc9c5d8-9126-4a1b-91ab-4f7874f685e6"
+        type="watchface"
+        name="@Strings.appName"
+        entry="PrideDashboardApp"
+        launcherIcon="@Drawables.LauncherIcon"
+        minApiLevel="5.0.0">
+        <iq:products>
+            <iq:product id="venusq2"/>
+            <iq:product id="venusq2m"/>
+        </iq:products>
+        <iq:permissions/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>
