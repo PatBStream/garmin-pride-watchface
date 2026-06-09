@@ -69,7 +69,7 @@ Current active-mode choices:
 - AM/PM: `Graphics.FONT_XTINY`
 - Metric values: `Graphics.FONT_SMALL`
 
-Text contrast is handled with 2px black shadow offsets over the full-color bitmap. This avoids covering the Pride background with dark UI cards.
+Text contrast is handled with layered black shadow offsets over the full-color bitmap. Metric icons and accent bars also render with an offset black base layer, giving the data elements a heavier 3D edge without covering the Pride background with dark UI cards.
 
 ## Data Behavior
 

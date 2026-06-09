@@ -60,6 +60,21 @@ class PrideDashboardView extends WatchUi.WatchFace {
         return (value < floor) ? floor : value;
     }
 
+    private function shadowOffset(dc as Dc) as Number {
+        return atLeast(scaled(dc, 3), 3);
+    }
+
+    private function drawShadowedText(dc as Dc, x as Number, y as Number, font as FontType, text as String, justify as Number, color as Number) as Void {
+        var shadow = shadowOffset(dc);
+        var nearShadow = atLeast(shadow / 2, 2);
+
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x + shadow, y + shadow, font, text, justify);
+        dc.drawText(x + nearShadow, y + nearShadow, font, text, justify);
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, font, text, justify);
+    }
+
     private function drawActive(dc as Dc) as Void {
         drawBackground(dc, _activeBackground);
         drawScrims(dc);
@@ -122,10 +137,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
     private function drawTopRow(dc as Dc, primary as Number, secondary as Number, data as DashboardData) as Void {
         if (boolSetting("showDate", true)) {
             var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(sx(dc, 20), sy(dc, 21), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
-            dc.setColor(secondary, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(sx(dc, 18), sy(dc, 19), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
+            drawShadowedText(dc, sx(dc, 18), sy(dc, 19), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT, secondary);
         }
 
         // Battery is already shown in the data rows; avoid duplicating it in the top bar.
@@ -157,17 +169,11 @@ class PrideDashboardView extends WatchUi.WatchFace {
             text += ":" + Format.twoDigits(clock.sec);
         }
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + 2, y + 2, font, text, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y, font, text, Graphics.TEXT_JUSTIFY_CENTER);
+        drawShadowedText(dc, x, y, font, text, Graphics.TEXT_JUSTIFY_CENTER, color);
 
         if (!use24Hour() && !forceNoSeconds) {
             var suffixFont = isLargeDisplay(dc) ? Graphics.FONT_SMALL : Graphics.FONT_XTINY;
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x + sx(dc, 86), y + sy(dc, 35), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT);
-            dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x + sx(dc, 84), y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT);
+            drawShadowedText(dc, x + sx(dc, 84), y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
         }
     }
 
@@ -191,19 +197,25 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
     private function drawMetric(dc as Dc, x as Number, y as Number, width as Number, height as Number, icon as Number, value as String, accent as Number) as Void {
         var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
-        var shadow = atLeast(scaled(dc, 2), 2);
+        var shadow = shadowOffset(dc);
         var barWidth = atLeast(scaled(dc, 5), 5);
         var barHeight = atLeast(sy(dc, 28), 28);
+        var barX = x;
+        var barY = y + sy(dc, 6);
+        var iconX = x + sx(dc, 29);
+        var iconY = y + sy(dc, 21);
+        var valueX = x + width - sx(dc, 8);
+        var valueY = y + sy(dc, 6);
 
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
+        dc.fillRectangle(barX + shadow, barY + shadow, barWidth, barHeight);
         dc.setColor(accent, accent);
-        dc.fillRectangle(x, y + sy(dc, 6), barWidth, barHeight);
+        dc.fillRectangle(barX, barY, barWidth, barHeight);
 
-        drawMetricIcon(dc, icon, x + sx(dc, 29), y + sy(dc, 21), accent);
+        drawMetricIcon(dc, icon, iconX + shadow, iconY + shadow, Graphics.COLOR_BLACK);
+        drawMetricIcon(dc, icon, iconX, iconY, accent);
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + width - sx(dc, 8) + shadow, y + sy(dc, 6) + shadow, font, value, Graphics.TEXT_JUSTIFY_RIGHT);
-        dc.setColor(Theme.COLOR_PRIMARY_DEFAULT, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + width - sx(dc, 8), y + sy(dc, 6), font, value, Graphics.TEXT_JUSTIFY_RIGHT);
+        drawShadowedText(dc, valueX, valueY, font, value, Graphics.TEXT_JUSTIFY_RIGHT, Theme.COLOR_PRIMARY_DEFAULT);
     }
 
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {

@@ -11,11 +11,12 @@ These are future ideas, not v1 blockers.
 - Added `scripts/build-release.sh` to build all v2 targets sequentially and print artifact paths.
 - Added WSL helpers for Windows simulator launch and screenshot capture.
 - Smoke-tested `venux1` and `venusq2` in the Windows simulator.
+- Added deeper layered shadows for active-mode date, time, AM/PM, metric values, accent bars, and metric icons.
 
 ## Visual Design
 
 - Try a custom bitmap font for the main time.
-- Add more drop shadow to all elements to improve legibility on the busy background.
+- Continue tuning shadow depth after simulator and physical-watch review.
 - Consider alternate metric icon shapes if the line icons feel too abstract on-device.
 - Add an optional no-divider layout now that the background itself carries the Pride identity.
 
