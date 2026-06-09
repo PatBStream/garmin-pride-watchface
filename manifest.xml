@@ -10,6 +10,7 @@
         <iq:products>
             <iq:product id="venusq2"/>
             <iq:product id="venusq2m"/>
+            <iq:product id="venux1"/>
         </iq:products>
         <iq:permissions/>
         <iq:languages>

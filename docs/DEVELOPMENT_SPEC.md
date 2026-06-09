@@ -9,6 +9,13 @@ Version 1 is a private sideload Garmin Connect IQ watch face for:
 
 The design was tuned against the Windows Garmin simulator on 2026-06-08.
 
+Version 2 development started from the approved v1 release point. The first v2 target expansion adds:
+
+- Venu X1: `venux1`
+- Device-specific generated artwork for the 448x486 X1 display
+- Runtime layout scaling from the approved 320x360 Venu Sq 2 geometry
+- Initial Windows simulator smoke checks for `venusq2` and `venux1`
+
 ## V1 Product Intent
 
 Pride Dashboard should show off a full-screen Progress Pride background while staying useful as a daily watch face. The face favors a bright expressive canvas with a small number of glanceable fields rather than a dense utility dashboard.
@@ -24,11 +31,12 @@ V1 priorities:
 
 ## Device Target
 
-- Canvas: 320 x 360
+- Venu Sq 2 canvas: 320 x 360
+- Venu X1 canvas: 448 x 486
 - Shape: rectangular
 - Display: AMOLED
 - Minimum API: 5.0.0
-- Supported product ids: `venusq2`, `venusq2m`
+- Supported product ids: `venusq2`, `venusq2m`, `venux1`
 
 ## V1 Visual Design
 
@@ -130,6 +138,9 @@ Generated assets:
 - `resources/drawables/pride_bg_active.png`
 - `resources/drawables/pride_bg_aod.png`
 - `resources/drawables/launcher_icon.png`
+- `resources-venux1/drawables/pride_bg_active.png`
+- `resources-venux1/drawables/pride_bg_aod.png`
+- `resources-venux1/drawables/launcher_icon.png`
 
 Build outputs are generated under `build/` and ignored by git.
 
@@ -138,8 +149,7 @@ Build outputs are generated under `build/` and ignored by git.
 Use sequential builds:
 
 ```sh
-scripts/build.sh venusq2
-scripts/build.sh venusq2m
+scripts/build-release.sh
 ```
 
 Expected output:
@@ -147,9 +157,20 @@ Expected output:
 ```text
 build/PrideDashboard-venusq2.prg
 build/PrideDashboard-venusq2m.prg
+build/PrideDashboard-venux1.prg
 ```
 
 The build script uses a lock file because parallel `monkeyc` invocations produced intermittent critical errors during development.
 
 See `docs/TOOLCHAIN.md` for Windows/WSL SDK paths and simulator notes.
 
+## V2 Simulation Notes
+
+Initial v2 simulator smoke checks were run from WSL through the Windows Garmin SDK helpers:
+
+```sh
+scripts/run-windows-simulator.sh venux1
+scripts/run-windows-simulator.sh venusq2
+```
+
+Both targets launched and displayed the watch face. Screenshots were captured with `scripts/capture-windows-screen.sh` into ignored `tmp/` files for local visual inspection.

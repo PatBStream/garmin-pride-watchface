@@ -78,6 +78,7 @@ The project now builds clean target-specific PRGs via:
 ```sh
 scripts/build.sh venusq2
 scripts/build.sh venusq2m
+scripts/build.sh venux1
 ```
 
 That produces:
@@ -85,17 +86,27 @@ That produces:
 ```text
 build/PrideDashboard-venusq2.prg
 build/PrideDashboard-venusq2m.prg
+build/PrideDashboard-venux1.prg
 ```
 
 The Linux Garmin simulator still cannot run directly in this ARM64 WSL install because it is an x86-64 ELF binary. Use the Windows host simulator / VS Code Monkey C extension for simulator testing.
 
-## Release Build
-
-For v1, rebuild both target PRGs sequentially:
+WSL helper scripts are available for the Windows simulator path on this machine:
 
 ```sh
-scripts/build.sh venusq2
-scripts/build.sh venusq2m
+scripts/run-windows-simulator.sh venusq2
+scripts/run-windows-simulator.sh venux1
+scripts/capture-windows-screen.sh tmp/simulator.png
+```
+
+`run-windows-simulator.sh` starts the Windows simulator if needed and then runs `monkeydo.bat` for the requested device. It is expected to stay attached while the simulated app is running.
+
+## Release Build
+
+For v2, rebuild all target PRGs sequentially:
+
+```sh
+scripts/build-release.sh
 ```
 
 Do not run `monkeyc` builds in parallel in this repo. During development, parallel target builds intermittently produced a generic `critical error`; sequential builds are stable. `scripts/build.sh` uses `build/.build.lock` to serialize invocations.
@@ -105,6 +116,7 @@ Expected target artifacts:
 ```text
 build/PrideDashboard-venusq2.prg
 build/PrideDashboard-venusq2m.prg
+build/PrideDashboard-venux1.prg
 ```
 
 ## VS Code Extension Notes

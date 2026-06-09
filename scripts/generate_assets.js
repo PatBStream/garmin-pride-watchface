@@ -1,8 +1,22 @@
 const fs = require('fs');
 const zlib = require('zlib');
 
-const width = 320;
-const height = 360;
+const targets = [
+  {
+    name: 'base',
+    width: 320,
+    height: 360,
+    iconSize: 40,
+    outputDir: 'resources/drawables',
+  },
+  {
+    name: 'venux1',
+    width: 448,
+    height: 486,
+    iconSize: 65,
+    outputDir: 'resources-venux1/drawables',
+  },
+];
 
 function crc32(buf) {
   let c = ~0;
@@ -71,7 +85,7 @@ const progress = [
   [0x73, 0x29, 0x82],
 ];
 
-function makeBackground(mode) {
+function makeBackground(width, height, mode) {
   const data = Buffer.alloc(width * height * 4);
   const dim = mode === 'aod' ? 0.30 : 0.68;
 
@@ -79,8 +93,9 @@ function makeBackground(mode) {
     for (let x = 0; x < width; x += 1) {
       const index = (y * width + x) * 4;
       const diagonal = x + y * 0.66;
-      const wave = Math.sin((y / height) * Math.PI * 2.1) * 18;
-      const band = Math.floor(((diagonal + wave + 36) / 31) % progress.length);
+      const wave = Math.sin((y / height) * Math.PI * 2.1) * (height / 20);
+      const bandWidth = Math.max(31, Math.round(width / 10.3));
+      const band = Math.floor(((diagonal + wave + (width / 8.9)) / bandWidth) % progress.length);
       const stripe = progress[(band + progress.length) % progress.length];
       const shade = 0.78 + Math.sin((x / width) * Math.PI) * 0.12;
       const color = [
@@ -106,23 +121,42 @@ function makeBackground(mode) {
   return png(width, height, data);
 }
 
-function makeIcon() {
-  const size = 40;
+function makeIcon(size) {
   const data = Buffer.alloc(size * size * 4);
+  const center = size / 2;
+  const radius = size * 0.45;
   for (let y = 0; y < size; y += 1) {
     for (let x = 0; x < size; x += 1) {
       const index = (y * size + x) * 4;
-      const ring = Math.hypot(x - 20, y - 20);
-      const color = progress[Math.floor((x + y) / 7) % progress.length];
-      data[index] = ring < 18 ? color[0] : 0;
-      data[index + 1] = ring < 18 ? color[1] : 0;
-      data[index + 2] = ring < 18 ? color[2] : 0;
-      data[index + 3] = ring < 19 ? 255 : 0;
+      const ring = Math.hypot(x - center, y - center);
+      const color = progress[Math.floor((x + y) / Math.max(7, size / 5.7)) % progress.length];
+      data[index] = ring < radius ? color[0] : 0;
+      data[index + 1] = ring < radius ? color[1] : 0;
+      data[index + 2] = ring < radius ? color[2] : 0;
+      data[index + 3] = ring < radius + 1 ? 255 : 0;
     }
   }
   return png(size, size, data);
 }
 
-fs.writeFileSync('resources/drawables/pride_bg_active.png', makeBackground('active'));
-fs.writeFileSync('resources/drawables/pride_bg_aod.png', makeBackground('aod'));
-fs.writeFileSync('resources/drawables/launcher_icon.png', makeIcon());
+const drawablesXml = `<?xml version="1.0"?>
+<drawables>
+    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="PrideBackgroundActive" filename="pride_bg_active.png" />
+    <bitmap id="PrideBackgroundAod" filename="pride_bg_aod.png" />
+</drawables>
+`;
+
+for (const target of targets) {
+  fs.mkdirSync(target.outputDir, { recursive: true });
+  fs.writeFileSync(`${target.outputDir}/drawables.xml`, drawablesXml);
+  fs.writeFileSync(
+    `${target.outputDir}/pride_bg_active.png`,
+    makeBackground(target.width, target.height, 'active')
+  );
+  fs.writeFileSync(
+    `${target.outputDir}/pride_bg_aod.png`,
+    makeBackground(target.width, target.height, 'aod')
+  );
+  fs.writeFileSync(`${target.outputDir}/launcher_icon.png`, makeIcon(target.iconSize));
+}

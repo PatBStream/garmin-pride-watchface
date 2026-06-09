@@ -40,6 +40,26 @@ class PrideDashboardView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
+    private function sx(dc as Dc, value as Number) as Number {
+        return (value * dc.getWidth()) / 320;
+    }
+
+    private function sy(dc as Dc, value as Number) as Number {
+        return (value * dc.getHeight()) / 360;
+    }
+
+    private function scaled(dc as Dc, value as Number) as Number {
+        return ((value * dc.getWidth()) / 320 + (value * dc.getHeight()) / 360) / 2;
+    }
+
+    private function isLargeDisplay(dc as Dc) as Boolean {
+        return dc.getWidth() >= 400;
+    }
+
+    private function atLeast(value as Number, floor as Number) as Number {
+        return (value < floor) ? floor : value;
+    }
+
     private function drawActive(dc as Dc) as Void {
         drawBackground(dc, _activeBackground);
         drawScrims(dc);
@@ -50,7 +70,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
         drawTopRow(dc, primary, secondary, data);
         drawTime(dc, primary, false);
-        drawRainbowDivider(dc, 198);
+        drawRainbowDivider(dc, sy(dc, 198));
 
         var slot = 0;
         if (boolSetting("showSteps", true)) {
@@ -75,13 +95,15 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
         var offset = System.getClockTime().min % 5;
         var x = dc.getWidth() / 2;
-        var timeY = 126 + offset;
-        var dateY = 206 - offset;
+        var timeY = sy(dc, 126) + offset;
+        var dateY = sy(dc, 206) - offset;
+        var timeFont = Graphics.FONT_NUMBER_HOT;
+        var dateFont = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
 
         dc.setColor(Theme.COLOR_AOD_TEXT, Graphics.COLOR_TRANSPARENT);
-        drawTimeAt(dc, x, timeY, Graphics.FONT_NUMBER_HOT, false, true, Theme.COLOR_AOD_TEXT);
+        drawTimeAt(dc, x, timeY, timeFont, false, true, Theme.COLOR_AOD_TEXT);
 
-        dc.drawText(x, dateY, Graphics.FONT_SMALL, dateString(), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x, dateY, dateFont, dateString(), Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     private function drawBackground(dc as Dc, bitmap as BitmapResource?) as Void {
@@ -99,10 +121,11 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
     private function drawTopRow(dc as Dc, primary as Number, secondary as Number, data as DashboardData) as Void {
         if (boolSetting("showDate", true)) {
+            var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
             dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(20, 21, Graphics.FONT_SMALL, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(sx(dc, 20), sy(dc, 21), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
             dc.setColor(secondary, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(18, 19, Graphics.FONT_SMALL, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(sx(dc, 18), sy(dc, 19), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         // Battery is already shown in the data rows; avoid duplicating it in the top bar.
@@ -111,8 +134,8 @@ class PrideDashboardView extends WatchUi.WatchFace {
     private function drawTime(dc as Dc, color as Number, forceNoSeconds as Boolean) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         var seconds = showSeconds() && !forceNoSeconds;
-        var font = Graphics.FONT_NUMBER_MEDIUM;
-        var y = seconds ? 89 : 99;
+        var font = isLargeDisplay(dc) ? Graphics.FONT_NUMBER_HOT : Graphics.FONT_NUMBER_MEDIUM;
+        var y = seconds ? sy(dc, 89) : sy(dc, 99);
         drawTimeAt(dc, dc.getWidth() / 2, y, font, seconds, false, color);
     }
 
@@ -140,51 +163,58 @@ class PrideDashboardView extends WatchUi.WatchFace {
         dc.drawText(x, y, font, text, Graphics.TEXT_JUSTIFY_CENTER);
 
         if (!use24Hour() && !forceNoSeconds) {
+            var suffixFont = isLargeDisplay(dc) ? Graphics.FONT_SMALL : Graphics.FONT_XTINY;
             dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x + 86, y + 35, Graphics.FONT_XTINY, suffix, Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(x + sx(dc, 86), y + sy(dc, 35), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT);
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x + 84, y + 33, Graphics.FONT_XTINY, suffix, Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(x + sx(dc, 84), y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 
     private function drawRainbowDivider(dc as Dc, y as Number) as Void {
-        var x = 30;
-        var w = 43;
+        var x = sx(dc, 30);
+        var w = sx(dc, 43);
+        var h = atLeast(sy(dc, 2), 2);
         dc.setColor(Theme.RAINBOW_RED, Theme.RAINBOW_RED);
-        dc.fillRectangle(x, y, w, 2);
+        dc.fillRectangle(x, y, w, h);
         dc.setColor(Theme.RAINBOW_ORANGE, Theme.RAINBOW_ORANGE);
-        dc.fillRectangle(x + w, y, w, 2);
+        dc.fillRectangle(x + w, y, w, h);
         dc.setColor(Theme.RAINBOW_YELLOW, Theme.RAINBOW_YELLOW);
-        dc.fillRectangle(x + (w * 2), y, w, 2);
+        dc.fillRectangle(x + (w * 2), y, w, h);
         dc.setColor(Theme.RAINBOW_GREEN, Theme.RAINBOW_GREEN);
-        dc.fillRectangle(x + (w * 3), y, w, 2);
+        dc.fillRectangle(x + (w * 3), y, w, h);
         dc.setColor(Theme.RAINBOW_BLUE, Theme.RAINBOW_BLUE);
-        dc.fillRectangle(x + (w * 4), y, w, 2);
+        dc.fillRectangle(x + (w * 4), y, w, h);
         dc.setColor(Theme.RAINBOW_VIOLET, Theme.RAINBOW_VIOLET);
-        dc.fillRectangle(x + (w * 5), y, w, 2);
+        dc.fillRectangle(x + (w * 5), y, w, h);
     }
 
     private function drawMetric(dc as Dc, x as Number, y as Number, width as Number, height as Number, icon as Number, value as String, accent as Number) as Void {
-        dc.setColor(accent, accent);
-        dc.fillRectangle(x, y + 6, 5, 28);
+        var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
+        var shadow = atLeast(scaled(dc, 2), 2);
+        var barWidth = atLeast(scaled(dc, 5), 5);
+        var barHeight = atLeast(sy(dc, 28), 28);
 
-        drawMetricIcon(dc, icon, x + 29, y + 21, accent);
+        dc.setColor(accent, accent);
+        dc.fillRectangle(x, y + sy(dc, 6), barWidth, barHeight);
+
+        drawMetricIcon(dc, icon, x + sx(dc, 29), y + sy(dc, 21), accent);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + width - 6, y + 8, Graphics.FONT_SMALL, value, Graphics.TEXT_JUSTIFY_RIGHT);
+        dc.drawText(x + width - sx(dc, 8) + shadow, y + sy(dc, 6) + shadow, font, value, Graphics.TEXT_JUSTIFY_RIGHT);
         dc.setColor(Theme.COLOR_PRIMARY_DEFAULT, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + width - 8, y + 6, Graphics.FONT_SMALL, value, Graphics.TEXT_JUSTIFY_RIGHT);
+        dc.drawText(x + width - sx(dc, 8), y + sy(dc, 6), font, value, Graphics.TEXT_JUSTIFY_RIGHT);
     }
 
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {
         if (slot == 0) {
-            drawMetric(dc, 18, 226, 134, 40, icon, value, accent);
+            drawMetric(dc, sx(dc, 18), sy(dc, 226), sx(dc, 134), sy(dc, 40), icon, value, accent);
         } else if (slot == 1) {
-            drawMetric(dc, 170, 226, 134, 40, icon, value, accent);
+            drawMetric(dc, sx(dc, 170), sy(dc, 226), sx(dc, 134), sy(dc, 40), icon, value, accent);
         } else if (slot == 2) {
-            drawMetric(dc, 18, 282, 134, 40, icon, value, accent);
+            drawMetric(dc, sx(dc, 18), sy(dc, 282), sx(dc, 134), sy(dc, 40), icon, value, accent);
         } else if (slot == 3) {
-            drawMetric(dc, 170, 282, 134, 40, icon, value, accent);
+            drawMetric(dc, sx(dc, 170), sy(dc, 282), sx(dc, 134), sy(dc, 40), icon, value, accent);
         }
     }
 
@@ -192,28 +222,28 @@ class PrideDashboardView extends WatchUi.WatchFace {
         dc.setColor(accent, Graphics.COLOR_TRANSPARENT);
 
         if (icon == 2) {
-            dc.drawRectangle(cx - 12, cy - 8, 21, 15);
-            dc.fillRectangle(cx + 10, cy - 4, 4, 7);
-            dc.fillRectangle(cx - 9, cy - 5, 11, 9);
+            dc.drawRectangle(cx - scaled(dc, 12), cy - scaled(dc, 8), scaled(dc, 21), scaled(dc, 15));
+            dc.fillRectangle(cx + scaled(dc, 10), cy - scaled(dc, 4), atLeast(scaled(dc, 4), 4), scaled(dc, 7));
+            dc.fillRectangle(cx - scaled(dc, 9), cy - scaled(dc, 5), scaled(dc, 11), scaled(dc, 9));
         } else if (icon == 1) {
-            dc.drawLine(cx - 14, cy, cx - 8, cy);
-            dc.drawLine(cx - 8, cy, cx - 4, cy - 7);
-            dc.drawLine(cx - 4, cy - 7, cx + 1, cy + 8);
-            dc.drawLine(cx + 1, cy + 8, cx + 6, cy - 3);
-            dc.drawLine(cx + 6, cy - 3, cx + 14, cy - 3);
+            dc.drawLine(cx - scaled(dc, 14), cy, cx - scaled(dc, 8), cy);
+            dc.drawLine(cx - scaled(dc, 8), cy, cx - scaled(dc, 4), cy - scaled(dc, 7));
+            dc.drawLine(cx - scaled(dc, 4), cy - scaled(dc, 7), cx + scaled(dc, 1), cy + scaled(dc, 8));
+            dc.drawLine(cx + scaled(dc, 1), cy + scaled(dc, 8), cx + scaled(dc, 6), cy - scaled(dc, 3));
+            dc.drawLine(cx + scaled(dc, 6), cy - scaled(dc, 3), cx + scaled(dc, 14), cy - scaled(dc, 3));
         } else if (icon == 3) {
-            dc.drawLine(cx, cy - 13, cx - 8, cy - 3);
-            dc.drawLine(cx - 8, cy - 3, cx - 5, cy + 10);
-            dc.drawLine(cx - 5, cy + 10, cx + 7, cy + 10);
-            dc.drawLine(cx + 7, cy + 10, cx + 10, cy - 3);
-            dc.drawLine(cx + 10, cy - 3, cx + 4, cy - 8);
-            dc.drawLine(cx + 4, cy - 8, cx, cy - 13);
+            dc.drawLine(cx, cy - scaled(dc, 13), cx - scaled(dc, 8), cy - scaled(dc, 3));
+            dc.drawLine(cx - scaled(dc, 8), cy - scaled(dc, 3), cx - scaled(dc, 5), cy + scaled(dc, 10));
+            dc.drawLine(cx - scaled(dc, 5), cy + scaled(dc, 10), cx + scaled(dc, 7), cy + scaled(dc, 10));
+            dc.drawLine(cx + scaled(dc, 7), cy + scaled(dc, 10), cx + scaled(dc, 10), cy - scaled(dc, 3));
+            dc.drawLine(cx + scaled(dc, 10), cy - scaled(dc, 3), cx + scaled(dc, 4), cy - scaled(dc, 8));
+            dc.drawLine(cx + scaled(dc, 4), cy - scaled(dc, 8), cx, cy - scaled(dc, 13));
         } else {
-            dc.fillCircle(cx - 6, cy - 10, 4);
-            dc.drawLine(cx - 6, cy - 6, cx - 2, cy + 3);
-            dc.drawLine(cx - 2, cy + 3, cx - 10, cy + 11);
-            dc.drawLine(cx - 2, cy + 3, cx + 9, cy + 10);
-            dc.drawLine(cx - 4, cy - 1, cx + 10, cy - 1);
+            dc.fillCircle(cx - scaled(dc, 6), cy - scaled(dc, 10), atLeast(scaled(dc, 4), 4));
+            dc.drawLine(cx - scaled(dc, 6), cy - scaled(dc, 6), cx - scaled(dc, 2), cy + scaled(dc, 3));
+            dc.drawLine(cx - scaled(dc, 2), cy + scaled(dc, 3), cx - scaled(dc, 10), cy + scaled(dc, 11));
+            dc.drawLine(cx - scaled(dc, 2), cy + scaled(dc, 3), cx + scaled(dc, 9), cy + scaled(dc, 10));
+            dc.drawLine(cx - scaled(dc, 4), cy - scaled(dc, 1), cx + scaled(dc, 10), cy - scaled(dc, 1));
         }
     }
 
