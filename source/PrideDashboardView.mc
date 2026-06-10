@@ -230,8 +230,9 @@ class PrideDashboardView extends WatchUi.WatchFace {
         var font = Graphics.FONT_XTINY;
         var shadow = shadowOffset(dc);
         var innerRadius = radius - atLeast(scaled(dc, 6), 6);
-        var iconY = cy - sy(dc, 17);
-        var valueY = cy + sy(dc, 2);
+        var iconY = cy - (radius / 2);
+        var valueHeight = dc.getFontHeight(font);
+        var valueY = cy + (radius / 4) - (valueHeight / 2);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawCircle(cx + shadow, cy + shadow, radius);
@@ -248,9 +249,9 @@ class PrideDashboardView extends WatchUi.WatchFace {
     }
 
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {
-        var edgePadding = atLeast(scaled(dc, 9), 9);
+        var edgePadding = atLeast(scaled(dc, 5), 5);
         var gap = (dc.getWidth() - (edgePadding * 2)) / 4;
-        var radius = atMost(atLeast(scaled(dc, 34), 34), (gap / 2) - atLeast(scaled(dc, 5), 5));
+        var radius = atMost(atLeast(scaled(dc, 36), 36), (gap / 2) - atLeast(scaled(dc, 3), 3));
         var x = edgePadding + (gap / 2) + (gap * slot);
         var y = sy(dc, 288);
 
