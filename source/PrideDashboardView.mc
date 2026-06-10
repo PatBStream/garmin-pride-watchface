@@ -105,7 +105,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
             slot++;
         }
         if (boolSetting("showCalories", true)) {
-            drawMetricSlot(dc, slot, 3, metricValue(data.calories), Theme.COLOR_CALORIES);
+            drawMetricSlot(dc, slot, 3, Format.compactNumber(data.calories), Theme.COLOR_CALORIES);
         }
     }
 
@@ -173,19 +173,36 @@ class PrideDashboardView extends WatchUi.WatchFace {
             text += ":" + Format.twoDigits(clock.sec);
         }
 
-        drawShadowedText(dc, x, y, font, text, Graphics.TEXT_JUSTIFY_CENTER, color);
+        var timeX = x;
 
         if (!use24Hour() && !forceNoSeconds) {
             var suffixFont = isLargeDisplay(dc) ? Graphics.FONT_SMALL : Graphics.FONT_XTINY;
             var timeWidth = dc.getTextWidthInPixels(text, font);
             var suffixWidth = dc.getTextWidthInPixels(suffix, suffixFont);
             var padding = atLeast(scaled(dc, 6), 6);
-            var suffixX = x + (timeWidth / 2) + padding;
-            var maxSuffixX = dc.getWidth() - suffixWidth - padding - shadowOffset(dc);
+            var edgePadding = padding + shadowOffset(dc);
+            var groupWidth = timeWidth + padding + suffixWidth;
+            var leftEdge = timeX - (timeWidth / 2);
+            var rightEdge = leftEdge + groupWidth;
+            var maxRight = dc.getWidth() - edgePadding;
 
-            if (suffixX > maxSuffixX) {
-                suffixX = maxSuffixX;
+            if (rightEdge > maxRight) {
+                timeX -= rightEdge - maxRight;
             }
+
+            leftEdge = timeX - (timeWidth / 2);
+            if (leftEdge < edgePadding) {
+                timeX += edgePadding - leftEdge;
+            }
+        }
+
+        drawShadowedText(dc, timeX, y, font, text, Graphics.TEXT_JUSTIFY_CENTER, color);
+
+        if (!use24Hour() && !forceNoSeconds) {
+            var suffixFont = isLargeDisplay(dc) ? Graphics.FONT_SMALL : Graphics.FONT_XTINY;
+            var timeWidth = dc.getTextWidthInPixels(text, font);
+            var padding = atLeast(scaled(dc, 6), 6);
+            var suffixX = timeX + (timeWidth / 2) + padding;
 
             drawShadowedText(dc, suffixX, y + sy(dc, 32), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
         }

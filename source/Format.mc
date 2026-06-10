@@ -14,10 +14,9 @@ module Format {
         }
 
         if (value >= 10000) {
-            return (value.toFloat() / 1000.0).format("%.1f") + "K";
+            return (value / 1000).toString() + "K";
         }
 
         return value.toString();
     }
 }
-
