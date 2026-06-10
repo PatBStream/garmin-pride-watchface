@@ -146,8 +146,8 @@ class PrideDashboardView extends WatchUi.WatchFace {
     private function drawTime(dc as Dc, color as Number, forceNoSeconds as Boolean) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         var seconds = showSeconds() && !forceNoSeconds;
-        var font = isLargeDisplay(dc) ? Graphics.FONT_NUMBER_HOT : Graphics.FONT_NUMBER_MEDIUM;
-        var y = seconds ? sy(dc, 89) : sy(dc, 99);
+        var font = seconds ? Graphics.FONT_NUMBER_MEDIUM : Graphics.FONT_NUMBER_HOT;
+        var y = seconds ? sy(dc, 89) : sy(dc, 92);
         drawTimeAt(dc, dc.getWidth() / 2, y, font, seconds, false, color);
     }
 
@@ -183,7 +183,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
                 suffixX = maxSuffixX;
             }
 
-            drawShadowedText(dc, suffixX, y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
+            drawShadowedText(dc, suffixX, y + sy(dc, 38), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
         }
     }
 
@@ -205,39 +205,32 @@ class PrideDashboardView extends WatchUi.WatchFace {
         dc.fillRectangle(x + (w * 5), y, w, h);
     }
 
-    private function drawMetric(dc as Dc, x as Number, y as Number, width as Number, height as Number, icon as Number, value as String, accent as Number) as Void {
-        var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
+    private function drawMetric(dc as Dc, cx as Number, cy as Number, radius as Number, icon as Number, value as String, accent as Number) as Void {
+        var font = Graphics.FONT_SMALL;
         var shadow = shadowOffset(dc);
-        var barWidth = atLeast(scaled(dc, 5), 5);
-        var barHeight = atLeast(sy(dc, 28), 28);
-        var barX = x;
-        var barY = y + sy(dc, 6);
-        var iconX = x + sx(dc, 29);
-        var iconY = y + sy(dc, 21);
-        var valueX = x + width - sx(dc, 8);
-        var valueY = y + sy(dc, 6);
+        var innerRadius = radius - atLeast(scaled(dc, 5), 5);
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
-        dc.fillRectangle(barX + shadow, barY + shadow, barWidth, barHeight);
-        dc.setColor(accent, accent);
-        dc.fillRectangle(barX, barY, barWidth, barHeight);
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(cx + shadow, cy + shadow, radius);
+        dc.drawCircle(cx + shadow, cy + shadow, innerRadius);
 
-        drawMetricIcon(dc, icon, iconX + shadow, iconY + shadow, Graphics.COLOR_BLACK);
-        drawMetricIcon(dc, icon, iconX, iconY, accent);
+        dc.setColor(accent, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(cx, cy, radius);
+        dc.drawCircle(cx, cy, innerRadius);
 
-        drawShadowedText(dc, valueX, valueY, font, value, Graphics.TEXT_JUSTIFY_RIGHT, Theme.COLOR_PRIMARY_DEFAULT);
+        drawMetricIcon(dc, icon, cx + shadow, cy - sy(dc, 10) + shadow, Graphics.COLOR_BLACK);
+        drawMetricIcon(dc, icon, cx, cy - sy(dc, 10), accent);
+
+        drawShadowedText(dc, cx, cy + sy(dc, 7), font, value, Graphics.TEXT_JUSTIFY_CENTER, Theme.COLOR_PRIMARY_DEFAULT);
     }
 
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {
-        if (slot == 0) {
-            drawMetric(dc, sx(dc, 18), sy(dc, 226), sx(dc, 134), sy(dc, 40), icon, value, accent);
-        } else if (slot == 1) {
-            drawMetric(dc, sx(dc, 170), sy(dc, 226), sx(dc, 134), sy(dc, 40), icon, value, accent);
-        } else if (slot == 2) {
-            drawMetric(dc, sx(dc, 18), sy(dc, 282), sx(dc, 134), sy(dc, 40), icon, value, accent);
-        } else if (slot == 3) {
-            drawMetric(dc, sx(dc, 170), sy(dc, 282), sx(dc, 134), sy(dc, 40), icon, value, accent);
-        }
+        var radius = atLeast(scaled(dc, 31), 31);
+        var gap = dc.getWidth() / 4;
+        var x = (gap / 2) + (gap * slot);
+        var y = sy(dc, 288);
+
+        drawMetric(dc, x, y, radius, icon, value, accent);
     }
 
     private function drawMetricIcon(dc as Dc, icon as Number, cx as Number, cy as Number, accent as Number) as Void {

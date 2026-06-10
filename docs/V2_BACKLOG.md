@@ -13,6 +13,7 @@ These are future ideas, not v1 blockers.
 - Smoke-tested `venux1` and `venusq2` in the Windows simulator.
 - Added deeper layered shadows for active-mode date, time, AM/PM, metric values, accent bars, and metric icons.
 - Replaced the fixed AM/PM offset with measured time text width so the suffix stays clear of wider minute digits.
+- Enlarged the active-mode time and replaced rectangular metric rows with transparent circular bottom gauges while keeping the Pride artwork visible.
 
 ## Visual Design
 
