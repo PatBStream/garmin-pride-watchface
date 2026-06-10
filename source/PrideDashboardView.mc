@@ -60,6 +60,10 @@ class PrideDashboardView extends WatchUi.WatchFace {
         return (value < floor) ? floor : value;
     }
 
+    private function atMost(value as Number, ceiling as Number) as Number {
+        return (value > ceiling) ? ceiling : value;
+    }
+
     private function shadowOffset(dc as Dc) as Number {
         return atLeast(scaled(dc, 3), 3);
     }
@@ -137,7 +141,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
     private function drawTopRow(dc as Dc, primary as Number, secondary as Number, data as DashboardData) as Void {
         if (boolSetting("showDate", true)) {
             var font = isLargeDisplay(dc) ? Graphics.FONT_MEDIUM : Graphics.FONT_SMALL;
-            drawShadowedText(dc, sx(dc, 18), sy(dc, 19), font, dateString(), Graphics.TEXT_JUSTIFY_LEFT, secondary);
+            drawShadowedText(dc, dc.getWidth() / 2, sy(dc, 19), font, dateString(), Graphics.TEXT_JUSTIFY_CENTER, secondary);
         }
 
         // Battery is already shown in the data rows; avoid duplicating it in the top bar.
@@ -183,7 +187,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
                 suffixX = maxSuffixX;
             }
 
-            drawShadowedText(dc, suffixX, y + sy(dc, 38), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
+            drawShadowedText(dc, suffixX, y + sy(dc, 32), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
         }
     }
 
@@ -206,9 +210,11 @@ class PrideDashboardView extends WatchUi.WatchFace {
     }
 
     private function drawMetric(dc as Dc, cx as Number, cy as Number, radius as Number, icon as Number, value as String, accent as Number) as Void {
-        var font = Graphics.FONT_SMALL;
+        var font = Graphics.FONT_XTINY;
         var shadow = shadowOffset(dc);
-        var innerRadius = radius - atLeast(scaled(dc, 5), 5);
+        var innerRadius = radius - atLeast(scaled(dc, 6), 6);
+        var iconY = cy - sy(dc, 12);
+        var valueY = cy + sy(dc, 6);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawCircle(cx + shadow, cy + shadow, radius);
@@ -218,16 +224,17 @@ class PrideDashboardView extends WatchUi.WatchFace {
         dc.drawCircle(cx, cy, radius);
         dc.drawCircle(cx, cy, innerRadius);
 
-        drawMetricIcon(dc, icon, cx + shadow, cy - sy(dc, 10) + shadow, Graphics.COLOR_BLACK);
-        drawMetricIcon(dc, icon, cx, cy - sy(dc, 10), accent);
+        drawMetricIcon(dc, icon, cx + shadow, iconY + shadow, Graphics.COLOR_BLACK);
+        drawMetricIcon(dc, icon, cx, iconY, accent);
 
-        drawShadowedText(dc, cx, cy + sy(dc, 7), font, value, Graphics.TEXT_JUSTIFY_CENTER, Theme.COLOR_PRIMARY_DEFAULT);
+        drawShadowedText(dc, cx, valueY, font, value, Graphics.TEXT_JUSTIFY_CENTER, Theme.COLOR_PRIMARY_DEFAULT);
     }
 
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {
-        var radius = atLeast(scaled(dc, 31), 31);
-        var gap = dc.getWidth() / 4;
-        var x = (gap / 2) + (gap * slot);
+        var edgePadding = atLeast(scaled(dc, 9), 9);
+        var gap = (dc.getWidth() - (edgePadding * 2)) / 4;
+        var radius = atMost(atLeast(scaled(dc, 36), 36), (gap / 2) - atLeast(scaled(dc, 2), 2));
+        var x = edgePadding + (gap / 2) + (gap * slot);
         var y = sy(dc, 288);
 
         drawMetric(dc, x, y, radius, icon, value, accent);
