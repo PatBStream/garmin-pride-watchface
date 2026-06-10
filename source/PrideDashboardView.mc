@@ -89,7 +89,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
         drawTopRow(dc, primary, secondary, data);
         drawTime(dc, primary, false);
-        drawRainbowDivider(dc, sy(dc, 198));
+        drawRainbowDivider(dc, sy(dc, 228));
 
         var slot = 0;
         if (boolSetting("showSteps", true)) {
@@ -213,8 +213,8 @@ class PrideDashboardView extends WatchUi.WatchFace {
         var font = Graphics.FONT_XTINY;
         var shadow = shadowOffset(dc);
         var innerRadius = radius - atLeast(scaled(dc, 6), 6);
-        var iconY = cy - sy(dc, 12);
-        var valueY = cy + sy(dc, 6);
+        var iconY = cy - sy(dc, 17);
+        var valueY = cy + sy(dc, 2);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawCircle(cx + shadow, cy + shadow, radius);
@@ -233,7 +233,7 @@ class PrideDashboardView extends WatchUi.WatchFace {
     private function drawMetricSlot(dc as Dc, slot as Number, icon as Number, value as String, accent as Number) as Void {
         var edgePadding = atLeast(scaled(dc, 9), 9);
         var gap = (dc.getWidth() - (edgePadding * 2)) / 4;
-        var radius = atMost(atLeast(scaled(dc, 36), 36), (gap / 2) - atLeast(scaled(dc, 2), 2));
+        var radius = atMost(atLeast(scaled(dc, 34), 34), (gap / 2) - atLeast(scaled(dc, 5), 5));
         var x = edgePadding + (gap / 2) + (gap * slot);
         var y = sy(dc, 288);
 

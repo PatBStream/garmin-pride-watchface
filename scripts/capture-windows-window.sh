@@ -11,6 +11,8 @@ OUT="$2"
 TITLE_REGEX="${3:-.*}"
 WINDOW_X="${WINDOW_X:-}"
 WINDOW_Y="${WINDOW_Y:-0}"
+WINDOW_WIDTH="${WINDOW_WIDTH:-0}"
+WINDOW_HEIGHT="${WINDOW_HEIGHT:-0}"
 POWERSHELL="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
 WIN_TMP="C:\\Users\\patri\\AppData\\Local\\Temp\\watchface-window.png"
 WSL_TMP="/mnt/c/Users/patri/AppData/Local/Temp/watchface-window.png"
@@ -23,7 +25,7 @@ Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; pu
 \$proc = Get-Process '$PROCESS' | Where-Object { \$_.MainWindowHandle -ne 0 -and \$_.MainWindowTitle -match '$TITLE_REGEX' } | Select-Object -First 1; \
 if (-not \$proc) { throw 'No matching window found for process $PROCESS / $TITLE_REGEX'; } \
 [Win32]::ShowWindow(\$proc.MainWindowHandle, 9) | Out-Null; \
-if ('$WINDOW_X' -ne '') { [Win32]::SetWindowPos(\$proc.MainWindowHandle, [IntPtr](-1), $WINDOW_X, $WINDOW_Y, 0, 0, 0x0001) | Out-Null; } \
+if ('$WINDOW_X' -ne '') { [Win32]::SetWindowPos(\$proc.MainWindowHandle, [IntPtr](-1), $WINDOW_X, $WINDOW_Y, $WINDOW_WIDTH, $WINDOW_HEIGHT, 0) | Out-Null; } \
 [Win32]::SetWindowPos(\$proc.MainWindowHandle, [IntPtr](-1), 0, 0, 0, 0, 0x0001 -bor 0x0002) | Out-Null; \
 [Win32]::SetForegroundWindow(\$proc.MainWindowHandle) | Out-Null; \
 Start-Sleep -Milliseconds 300; \
