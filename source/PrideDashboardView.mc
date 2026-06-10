@@ -173,7 +173,17 @@ class PrideDashboardView extends WatchUi.WatchFace {
 
         if (!use24Hour() && !forceNoSeconds) {
             var suffixFont = isLargeDisplay(dc) ? Graphics.FONT_SMALL : Graphics.FONT_XTINY;
-            drawShadowedText(dc, x + sx(dc, 84), y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
+            var timeWidth = dc.getTextWidthInPixels(text, font);
+            var suffixWidth = dc.getTextWidthInPixels(suffix, suffixFont);
+            var padding = atLeast(scaled(dc, 6), 6);
+            var suffixX = x + (timeWidth / 2) + padding;
+            var maxSuffixX = dc.getWidth() - suffixWidth - padding - shadowOffset(dc);
+
+            if (suffixX > maxSuffixX) {
+                suffixX = maxSuffixX;
+            }
+
+            drawShadowedText(dc, suffixX, y + sy(dc, 33), suffixFont, suffix, Graphics.TEXT_JUSTIFY_LEFT, color);
         }
     }
 

@@ -12,6 +12,7 @@ These are future ideas, not v1 blockers.
 - Added WSL helpers for Windows simulator launch and screenshot capture.
 - Smoke-tested `venux1` and `venusq2` in the Windows simulator.
 - Added deeper layered shadows for active-mode date, time, AM/PM, metric values, accent bars, and metric icons.
+- Replaced the fixed AM/PM offset with measured time text width so the suffix stays clear of wider minute digits.
 
 ## Visual Design
 
